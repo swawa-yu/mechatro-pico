@@ -3,32 +3,6 @@ from tire import *
 from sensor import *
 import time
 
-pin_rimocon_sw_left1 = Pin(16, Pin.IN, Pin.PULL_DOWN)
-pin_rimocon_sw_left2 = Pin(17, Pin.IN, Pin.PULL_DOWN)
-pin_rimocon_sw_right1 = Pin(18, Pin.IN, Pin.PULL_DOWN)
-pin_rimocon_sw_right2 = Pin(19, Pin.IN, Pin.PULL_DOWN)
-
-
-def set_tire_from_rimocon():
-    l1 = pin_rimocon_sw_left1.value()
-    l2 = pin_rimocon_sw_left2.value()
-    r1 = pin_rimocon_sw_right1.value()
-    r2 = pin_rimocon_sw_right2.value()
-
-    if l1 == 1 and l2 == 0:
-        set_tire_left(1)
-    elif l1 == 0 and l2 == 1:
-        set_tire_left(-1)
-    else:
-        set_tire_left(0)
-
-    if r1 == 1 and r2 == 0:
-        set_tire_right(1)
-    elif r1 == 0 and r2 == 1:
-        set_tire_right(-1)
-    else:
-        set_tire_right(0)
-
 
 start = time.ticks_us()
 while True:
