@@ -49,6 +49,9 @@ def get_hcsr_distance(trig, echo, timeout=10000):
 
 
 def get_mtof_distance(i2c):
+    """
+    return: mm
+    """
     try:
         cmd = bytearray(1)
         cmd[0] = 0xD3
@@ -91,7 +94,7 @@ def is_target_detected():
 
 
 def distance_to_front():
-    return 0  # 仮の値。実際にはセンサーで取得する。
+    return get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
 
 
 def is_direction_north():
