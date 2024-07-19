@@ -119,6 +119,55 @@ def set_tire_from_rimocon():
         set_tire_right(0)
 
 
+def set_tire_from_front_sw():
+    l = is_left_arm_pressed()
+    r = is_right_arm_pressed()
+    # TODO: スピードの調整
+    match (l, r):
+        case (False, False):
+            set_tire(1, 1)
+        case (True, False):
+            set_tire(0, 1)
+        case (False, True):
+            set_tire(1, 0)
+
+
+def move_forward_and_back_while_target_in_catcher(loop_max=10):
+    """
+    loop_max: 最大の往復数
+    """
+    speed = 0.8
+    i = 0
+    while is_target_in_roll() and i < loop_max:
+        set_tire(-speed, -speed)
+        time.sleep(0.1)
+        set_tire(speed, speed)
+        time.sleep(0.1)
+        i += 1
+
+
+def pivot_right_and_left_while_target_in_catcher(loop_max=10):
+    """
+    loop_max: 最大の往復数
+    """
+    speed = 0.8
+    i = 0
+    while is_target_in_roll() and i < loop_max:
+        set_tire(-speed, speed)
+        time.sleep(0.1)
+        set_tire(speed, -speed)
+        time.sleep(0.1)
+        i += 1
+
+
+def set_tire(val_l, val_r):
+    """
+    val_l, val_r: -1 ~ 1 の値
+    """
+    set_tire_left(val_l)
+    set_tire_right(val_r)
+
+
 def set_tire_left(val):
     """
     val: -1 ~ 1 の値
@@ -183,25 +232,14 @@ def set_direction(dir):
 def go_to_wall_with_target_collection():
     while not is_front_close_to_wall():
         if is_target_in_roll():  # ターゲットがロールに入った場合
-            # 停止し、ターゲットを回収し終えるまで待つ
-            set_direction("stop")
-            while is_target_in_roll():
-                continue
-            continue
+            # 停止し、しばらく待機 TODO: 停止時間の調整
+            set_tire(0, 0)
+            time.sleep(3)
 
-        # アームの押され方によって進む方向を決定する(壁にぶつかっている状態 or ターゲット(か壁)が左右のにぶつかっている状態 or 何もない状態)
-        # match is_right_arm_pressed(), is_left_arm_pressed():
-        #     case True, True:
-        #         pass  # ルール的にはありえない。もしくは壁にぶつかったことをこれで判定するか。
-        #     case True, False:
-        #         set_direction("right")
-        #     case False, True:
-        #         set_direction("left")
-        #     case False, False:
-        #         # 単に前進...できれば、現在次の壁に到達するまでに保つべき壁との距離を保持しておいて「壁との距離を保ちながら前進」
-        #         set_direction("forward")
+            move_forward_and_back_while_target_in_catcher()
+            pivot_right_and_left_while_target_in_catcher()
 
+        set_tire_from_front_sw()
 
-#
 
 print("finish tire settings (in tire.py)")
