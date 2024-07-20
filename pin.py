@@ -6,6 +6,9 @@ print("init pin settings (in pin.py)")
 pin_front_sw_l = Pin(0, Pin.IN, Pin.PULL_DOWN)  # 1
 pin_front_sw_r = Pin(1, Pin.IN, Pin.PULL_DOWN)  # 2
 
+# ローラーキャッチスイッチ
+pin_catch_sw = Pin(14, Pin.IN, Pin.PULL_UP)  # 20
+
 # モーター
 pin_motor_ain1 = Pin(2, Pin.OUT)  # 4
 pin_motor_ain2 = Pin(3, Pin.OUT)  # 5

@@ -123,13 +123,19 @@ def set_tire_from_front_sw():
     l = is_left_arm_pressed()
     r = is_right_arm_pressed()
     # TODO: スピードの調整
-    match (l, r):
-        case (False, False):
-            set_tire(1, 1)
-        case (True, False):
-            set_tire(0, 1)
-        case (False, True):
-            set_tire(1, 0)
+    if not l and not r:
+        set_tire(1, 1)
+    elif l and not r:
+        set_tire(0, 1)
+    elif not l and r:
+        set_tire(1, 0)
+    # match l, r:
+    #     case False, False:
+    #         set_tire(1, 1)
+    #     case True, False:
+    #         set_tire(0, 1)
+    #     case False, True:
+    #         set_tire(1, 0)
 
 
 def move_forward_and_back_while_target_in_catcher(loop_max=10):
@@ -138,7 +144,7 @@ def move_forward_and_back_while_target_in_catcher(loop_max=10):
     """
     speed = 0.8
     i = 0
-    while is_target_in_roll() and i < loop_max:
+    while is_catching() and i < loop_max:
         set_tire(-speed, -speed)
         time.sleep(0.1)
         set_tire(speed, speed)
@@ -152,7 +158,7 @@ def pivot_right_and_left_while_target_in_catcher(loop_max=10):
     """
     speed = 0.8
     i = 0
-    while is_target_in_roll() and i < loop_max:
+    while is_catching() and i < loop_max:
         set_tire(-speed, speed)
         time.sleep(0.1)
         set_tire(speed, -speed)
@@ -231,7 +237,7 @@ def set_direction(dir):
 
 def go_to_wall_with_target_collection():
     while not is_front_close_to_wall():
-        if is_target_in_roll():  # ターゲットがロールに入った場合
+        if is_catching():  # ターゲットがロールに入った場合
             # 停止し、しばらく待機 TODO: 停止時間の調整
             set_tire(0, 0)
             time.sleep(3)

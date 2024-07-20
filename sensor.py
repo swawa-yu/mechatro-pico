@@ -17,6 +17,9 @@ import time
 
 
 def get_hcsr_distance(trig, echo, timeout=10000):
+    """
+    return: cm
+    """
     # トリガーを送信
     trig.low()
     time.sleep_us(2)
@@ -85,8 +88,8 @@ def is_close_to_left_wall():
     pass
 
 
-def is_target_in_roll():
-    pass
+def is_catching():
+    return pin_catch_sw.value()
 
 
 def is_target_detected():
