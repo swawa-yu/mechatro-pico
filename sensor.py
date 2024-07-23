@@ -89,7 +89,7 @@ def is_close_to_left_wall():
 
 
 def is_catching():
-    return pin_catch_sw.value()
+    return not pin_catch_sw.value()
 
 
 def is_target_detected():

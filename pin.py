@@ -7,7 +7,7 @@ pin_front_sw_l = Pin(0, Pin.IN, Pin.PULL_DOWN)  # 1
 pin_front_sw_r = Pin(1, Pin.IN, Pin.PULL_DOWN)  # 2
 
 # ローラーキャッチスイッチ
-pin_catch_sw = Pin(14, Pin.IN, Pin.PULL_UP)  # 20
+pin_catch_sw = Pin(14, Pin.IN, Pin.PULL_UP)  # 19
 
 # モーター
 pin_motor_ain1 = Pin(2, Pin.OUT)  # 4
