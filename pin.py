@@ -47,5 +47,9 @@ pin_rimocon_sw_left2 = Pin(17, Pin.IN, Pin.PULL_DOWN)
 pin_rimocon_sw_right1 = Pin(18, Pin.IN, Pin.PULL_DOWN)
 pin_rimocon_sw_right2 = Pin(19, Pin.IN, Pin.PULL_DOWN)
 
+# デバッグ用LED
+pin_debug_y = Pin(15, Pin.OUT)
+pin_debug_r = Pin(16, Pin.OUT)
+pin_debug_g = Pin(18, Pin.OUT)
 
 print("finish pin settings (in pin.py)")

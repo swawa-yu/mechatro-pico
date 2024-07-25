@@ -28,8 +28,8 @@ sd12 = 0
 # TODO: 壁から遠いときの誤差の調整
 def rotback_from_right_wall():
     while True:
-        d1 = get_mtof_distance(i2c1)
-        d2 = get_mtof_distance(i2c2)
+        d1 = try_to_get_mtof_distance(i2c1)
+        d2 = try_to_get_mtof_distance(i2c2)
         if d1 is None or d2 is None:
             continue
         d12 = d1 - d2
@@ -56,8 +56,8 @@ def back_from_right_wall(set1, set2, t=3):
     """
     start_t = time.ticks_ms()
     while time.ticks_diff(time.ticks_ms, start_t) < t:
-        d1 = get_mtof_distance(i2c1)
-        d2 = get_mtof_distance(i2c2)
+        d1 = try_to_get_mtof_distance(i2c1)
+        d2 = try_to_get_mtof_distance(i2c2)
         print("d1:", d1)
         print("d2:", d2)
 
@@ -85,8 +85,8 @@ def set_tire_from_right_wall(set1, set2):
     set2: レーザー測距センサー(前)の目標値
     """
     global d12, dd12, sd12
-    d1 = get_mtof_distance(i2c1)
-    d2 = get_mtof_distance(i2c2)
+    d1 = try_to_get_mtof_distance(i2c1)
+    d2 = try_to_get_mtof_distance(i2c2)
     print("d1:", d1)
     print("d2:", d2)
     # while d1 is 8888:
@@ -103,16 +103,24 @@ def set_tire_from_right_wall(set1, set2):
         print("abs(d12_) > 30    (return)")
         sd12 += d12 if d12 else 0
         return
+    if abs(set1 - d1) > 100:
+        sd12 += d12 if d12 else 0
+        return
+    if abs(set2 - d2) > 100:
+        sd12 += d12 if d12 else 0
+        return
 
     if d12 and abs(d12_ - d12) > 100:
         print("abs(dd12_) > 30    (return)")
         sd12 += d12 if d12 else 0
         return
 
-    k1 = 0.1 / 30  # 壁との距離
+    k1 = 0.05 / 30  # 壁との距離
     k2 = 0.1 / 30  # 壁との角度
     vl = k1 * ((d1 - set1) + (d2 - set2)) / 2 + k2 * (d1 - d2)
     vr = -k1 * ((d1 - set1) + (d2 - set2)) / 2 - k2 * (d1 - d2)
+    # k1 = 0.1 / 30  # 壁との距離
+    # k2 = 0.1 / 30  # 壁との角度
     # vl = k1 * (d1 - set1) + k2 * (d2 - set2)
     # vr = -k1 * (d1 - set1) - k2 * (d2 - set2)
     tire_l = 0.9 + vl
@@ -138,11 +146,11 @@ def set_tire_from_right_wall(set1, set2):
 
 
 # 一定距離進む関数
-# def move_front(distance):
-#     """
-#     distance: [cm]
-#     """
-#     pass
+def move_front(distance):
+    """
+    distance: [cm]
+    """
+    pass
 
 
 # Uターンする関数

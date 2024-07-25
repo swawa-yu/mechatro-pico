@@ -51,7 +51,7 @@ def get_hcsr_distance(trig, echo, timeout=10000):
     return distance
 
 
-def get_mtof_distance(i2c):
+def try_to_get_mtof_distance(i2c):
     """
     return: mm
     """
@@ -65,6 +65,17 @@ def get_mtof_distance(i2c):
     except OSError as e:
         print(f"I2C error: {e}")
         return None
+
+
+def get_mtof_distance(i2c):
+    """
+    return: mm
+    """
+    d = try_to_get_mtof_distance(i2c)
+    while d is None:
+        d = try_to_get_mtof_distance(i2c)
+    print("d1:" if i2c == i2c1 else "d2:", d)
+    return d
 
 
 # 各種センサーにより状態を得る関数
