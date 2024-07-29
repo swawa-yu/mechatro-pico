@@ -6,8 +6,8 @@ import time
 l_d1 = []
 l_d2 = []
 while True:
-    l_d1.append(get_mtof_distance(i2c1))
-    l_d2.append(get_mtof_distance(i2c2))
+    l_d1.append(try_to_get_mtof_distance(i2c1))
+    l_d2.append(try_to_get_mtof_distance(i2c2))
 
     if len(l_d1) > 1000:
         l_d1.pop(0)

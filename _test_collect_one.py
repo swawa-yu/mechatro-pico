@@ -4,8 +4,8 @@ from sensor import *
 import time
 
 
-pin_debug = Pin(15, Pin.OUT)
-pin_debug.value(1)
+pin_debug_y = Pin(15, Pin.OUT)
+pin_debug_y.value(1)
 
 # リモコンモード
 if pin_rimocon_sw_left1.value() or pin_rimocon_sw_left2.value() or pin_rimocon_sw_right1.value() or pin_rimocon_sw_right2.value():
@@ -31,7 +31,7 @@ if pin_rimocon_sw_left1.value() or pin_rimocon_sw_left2.value() or pin_rimocon_s
 
 # 通常モード
 else:
-    pin_debug.value(0)
+    pin_debug_y.value(0)
 
     # キャッチするまで前進
     while not pin_catch_sw.value():

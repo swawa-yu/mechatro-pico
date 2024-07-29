@@ -4,6 +4,6 @@ from sensor import *
 import time
 
 
-pin_debug = Pin(15, Pin.OUT)
+pin_debug_y = Pin(15, Pin.OUT)
 while True:
-    pin_debug.value(is_catching())
+    pin_debug_y.value(is_catching())
