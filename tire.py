@@ -79,7 +79,72 @@ def back_from_right_wall(set1, set2, t=3):
         set_tire(tire_l, tire_r)
 
 
-def set_tire_from_right_wall(set1, set2):
+def set_tire_from_right_wall(set1=None, set2=None):
+    """
+    set1: レーザー測距センサー(前)の目標値
+    set2: レーザー測距センサー(前)の目標値
+    """
+    global d12, dd12, sd12
+    d1 = try_to_get_mtof_distance(i2c1)
+    d2 = try_to_get_mtof_distance(i2c2)
+    print("d1:", d1)
+    print("d2:", d2)
+    # while d1 is 8888:
+    #     d1 = get_mtof_distance(i2c1)
+    # while d2 is 8888:
+    #     d2 = get_mtof_distance(i2c2)
+    if d1 is None or d2 is None:
+        return
+
+    d12_ = d1 - d2  # 目安は 30mm (で0.1くらいになるように)
+
+    # 壁でなくターゲットとの距離を測ってしまった場合は何もしない(一旦7.5cmとしている)
+    if abs(d12_) > 100:
+        print("abs(d12_) > 30    (return)")
+        sd12 += d12 if d12 else 0
+        pin_debug_r.value(1)
+        set_tire(0.7, 0.7)  # 一応前進させておく
+        return
+    if set1 and abs(set1 - d1) > 100:
+        sd12 += d12 if d12 else 0
+        pin_debug_r.value(1)
+        set_tire(0.7, 0.7)  # 一応前進させておく
+        return
+    if set2 and abs(set2 - d2) > 100:
+        sd12 += d12 if d12 else 0
+        pin_debug_r.value(1)
+        set_tire(0.7, 0.7)  # 一応前進させておく
+        return
+
+    if d12 and abs(d12_ - d12) > 100:
+        print("abs(dd12_) > 30    (return)")
+        sd12 += d12 if d12 else 0
+        pin_debug_r.value(1)
+        set_tire(0.7, 0.7)  # 一応前進させておく
+        return
+
+    pin_debug_r.value(0)
+
+    # 単に左右のセンサーの距離が等しくなるように制御する
+    if set1 == None or set2 == None:
+        kp = 0.1 / 30
+        v = kp * d12_
+        tire_l = 1 - max(0, -v)
+        tire_r = 1 - max(0, v)
+    # 設定された壁との距離(set1, set2)に合うように制御する
+    else:
+        k1 = 0.05 / 30  # 壁との距離
+        k2 = 0.1 / 30  # 壁との角度
+        vl = k1 * ((d1 - set1) + (d2 - set2)) / 2 + k2 * (d1 - d2)
+        vr = -k1 * ((d1 - set1) + (d2 - set2)) / 2 - k2 * (d1 - d2)
+        tire_l = 0.9 + vl
+        tire_r = 0.9 + vr
+
+    set_tire_left(tire_l)
+    set_tire_right(tire_r)
+
+
+def set_tire_back_from_right_wall(set1=None, set2=None):
     """
     set1: レーザー測距センサー(前)の目標値
     set2: レーザー測距センサー(前)の目標値
@@ -103,10 +168,10 @@ def set_tire_from_right_wall(set1, set2):
         print("abs(d12_) > 30    (return)")
         sd12 += d12 if d12 else 0
         return
-    if abs(set1 - d1) > 100:
+    if set1 and abs(set1 - d1) > 100:
         sd12 += d12 if d12 else 0
         return
-    if abs(set2 - d2) > 100:
+    if set2 and abs(set2 - d2) > 100:
         sd12 += d12 if d12 else 0
         return
 
@@ -115,34 +180,24 @@ def set_tire_from_right_wall(set1, set2):
         sd12 += d12 if d12 else 0
         return
 
-    k1 = 0.05 / 30  # 壁との距離
-    k2 = 0.1 / 30  # 壁との角度
-    vl = k1 * ((d1 - set1) + (d2 - set2)) / 2 + k2 * (d1 - d2)
-    vr = -k1 * ((d1 - set1) + (d2 - set2)) / 2 - k2 * (d1 - d2)
-    # k1 = 0.1 / 30  # 壁との距離
-    # k2 = 0.1 / 30  # 壁との角度
-    # vl = k1 * (d1 - set1) + k2 * (d2 - set2)
-    # vr = -k1 * (d1 - set1) - k2 * (d2 - set2)
-    tire_l = 0.9 + vl
-    tire_r = 0.9 + vr
+    # 単に左右のセンサーの距離が等しくなるように制御する
+    if set1 == None or set2 == None:
+        kp = 0.5 / 30
+        v = kp * d12_**0.6  # 非線形に設定しなければならない
+        tire_l = 1 - max(0, -v)
+        tire_r = 1 - max(0, v)
+    # 設定された壁との距離(set1, set2)に合うように制御する
+    else:
+        k1 = 0.05 / 30  # 壁との距離
+        k2 = 0.1 / 30  # 壁との角度
+        vl = k1 * ((d1 - set1) + (d2 - set2)) / 2 + k2 * (d1 - d2)
+        vr = -k1 * ((d1 - set1) + (d2 - set2)) / 2 - k2 * (d1 - d2)
+        tire_l = 0.9 + vl
+        tire_r = 0.9 + vr
 
-    # sd12 += d12_
-    # dd12 = d12_ - d12 if d12 else None
-    # d12 = d12_
-
-    # kp = 0.3 / 30
-    # ki = kp * 0
-    # kd = kp * 0
-    # # ki = kp * 0.0001
-    # # kd = kp * 0
-
-    # v = kp * d12_ + ki * sd12 + (kd * dd12 if dd12 else 0)
-    # tire_l = 1 - max(0, -v)
-    # tire_r = 1 - max(0, v)
-    # tire_l = 0.95 - kp * max(0, -d12)
-    # tire_r = 1 - kp * max(0, d12)
-    set_tire_left(tire_l)
-    set_tire_right(tire_r)
+    print("l, r:", -tire_r, -tire_l)
+    set_tire_left(-tire_r)
+    set_tire_right(-tire_l)
 
 
 # 一定距離進む関数
@@ -150,7 +205,27 @@ def move_front(distance):
     """
     distance: [cm]
     """
-    pass
+    sd = get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
+    d = get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
+    while sd - d > distance:
+        set_tire_from_right_wall()
+        time.sleep_ms(50)
+        d = get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
+
+
+def move_back(distance):
+    """
+    distance: [cm]
+    """
+    print("move_back")
+    sd = d = get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
+    print("sd:", sd)
+    while d - sd < distance:
+        # set_tire_back_from_right_wall()
+        set_tire(-0.8, -0.8)
+        time.sleep_ms(50)
+        d = get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
+        print(d)
 
 
 # Uターンする関数

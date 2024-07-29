@@ -4,7 +4,7 @@ from sensor import *
 import time
 
 
-def level2():
+def level3():
     i = 0
     count = 0
 
@@ -40,13 +40,13 @@ def level2():
                 time.sleep(5)
                 # pivot_right_and_left_while_target_in_catcher(t=0.2)
 
-            back_from_right_wall(294, 288)
+            back_from_right_wall(5, 5)
             set_tire(0.8, 0.8)
 
             count += 1
 
         # set_tire_from_front_sw()
-        set_tire_from_right_wall(294, 288)
+        set_tire_from_right_wall(5, 5)
 
         # d = get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
         # time.sleep_ms(50)
@@ -73,3 +73,10 @@ def level2():
 
     set_tire(0, 0)
     time.sleep(2)
+
+    # プログラムが終了したらここにくる
+    while True:
+        pin_debug_y.value(1)
+        time.sleep(0.1)
+        pin_debug_y.value(0)
+        time.sleep(0.1)

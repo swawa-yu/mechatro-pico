@@ -12,11 +12,11 @@ def level1():
     count = 0
 
     # while not is_front_close_to_wall():
-    d = get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
+    d = try_to_get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
     time.sleep_ms(50)
     while d is None:
         pin_debug_y.value(1)
-        d = get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
+        d = try_to_get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
         time.sleep_ms(50)
     pin_debug_y.value(0)
 
@@ -39,20 +39,21 @@ def level1():
                 time.sleep(5)
 
             back_from_right_wall(545, 523)
+            set_tire(0.75, 0.8)
 
             count += 1
 
         set_tire_from_right_wall(545, 523)
 
-    while d > 10:
+    while d > 5:
         print("d:", d)
         set_tire(1, 1)
 
-        d = get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
+        d = try_to_get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
         time.sleep_ms(50)
         while d is None:
             pin_debug_y.value(1)
-            d = get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
+            d = try_to_get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
             time.sleep_ms(50)
         pin_debug_y.value(0)
 

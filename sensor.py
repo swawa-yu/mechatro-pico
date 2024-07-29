@@ -16,7 +16,7 @@ time.sleep_ms(1000)
 import time
 
 
-def get_hcsr_distance(trig, echo, timeout=10000):
+def try_to_get_hcsr_distance(trig, echo, timeout=10000):
     """
     return: cm
     """
@@ -49,6 +49,18 @@ def get_hcsr_distance(trig, echo, timeout=10000):
     # 距離を計算 (音速 = 34300 cm/s)
     distance = (duration * 0.0343) / 2
     return distance
+
+
+def get_hcsr_distance(trig, echo, timeout=10000):
+    """
+    return: cm
+    """
+    d = try_to_get_hcsr_distance(trig, echo, timeout)
+    while d is None:
+        print("d is None")
+        time.sleep_ms(50)
+        d = try_to_get_hcsr_distance(trig, echo, timeout)
+    return d
 
 
 def try_to_get_mtof_distance(i2c):
@@ -108,7 +120,7 @@ def is_target_detected():
 
 
 def distance_to_front():
-    return get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
+    return try_to_get_hcsr_distance(pin_front_hcsr_trig, pin_front_hcsr_echo)
 
 
 def is_direction_north():

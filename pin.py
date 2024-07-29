@@ -50,6 +50,8 @@ pin_rimocon_sw_right2 = Pin(19, Pin.IN, Pin.PULL_DOWN)
 # デバッグ用LED
 pin_debug_y = Pin(15, Pin.OUT)
 pin_debug_r = Pin(16, Pin.OUT)
+pin_debug_r_gnd = Pin(17, Pin.OUT)
 pin_debug_g = Pin(18, Pin.OUT)
+pin_debug_g_gnd = Pin(19, Pin.OUT)
 
 print("finish pin settings (in pin.py)")
